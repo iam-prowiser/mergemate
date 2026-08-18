@@ -9,7 +9,10 @@ if not firebase_admin._apps:
         {
             "type": "service_account",
             "project_id": settings.firebase_project_id,
-            "private_key": settings.firebase_private_key,
+            "private_key": settings.firebase_private_key.replace(
+            "\\n",
+            "\n",
+        ),
             "client_email": settings.firebase_client_email,
             "token_uri": "https://oauth2.googleapis.com/token",
         }
