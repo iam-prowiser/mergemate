@@ -2,7 +2,6 @@ import httpx
 
 from fastapi import HTTPException
 
-from app.core.config import settings
 from app.services.nim_service import evaluate_issues
 
 
@@ -21,13 +20,8 @@ def is_low_value_issue(item: dict) -> bool:
     It does NOT decide whether an issue is relevant to the user.
     """
 
-    title = (
-        item.get("title") or ""
-    ).lower()
-
-    body = (
-        item.get("body") or ""
-    ).lower()
+    title = (item.get("title") or "").lower()
+    body = (item.get("body") or "").lower()
 
     labels = {
         (label.get("name") or "").lower()
@@ -35,10 +29,6 @@ def is_low_value_issue(item: dict) -> bool:
     }
 
     text = f"{title} {body} {' '.join(labels)}"
-
-    # ---------------------------------------------------------
-    # Obvious automation / dependency noise
-    # ---------------------------------------------------------
 
     blocked_terms = [
         "dependency dashboard",
@@ -56,11 +46,6 @@ def is_low_value_issue(item: dict) -> bool:
     if any(term in text for term in blocked_terms):
         return True
 
-    # ---------------------------------------------------------
-    # Security / CVE issues are not contribution targets
-    # for our beginner-oriented matching system.
-    # ---------------------------------------------------------
-
     security_labels = {
         "security",
         "vulnerability",
@@ -70,14 +55,6 @@ def is_low_value_issue(item: dict) -> bool:
 
     if labels.intersection(security_labels):
         return True
-
-    # ---------------------------------------------------------
-    # Issues that are primarily research/performance work.
-    #
-    # We don't reject every performance issue globally,
-    # but obvious benchmark/research tasks are poor beginner
-    # candidates.
-    # ---------------------------------------------------------
 
     research_labels = {
         "wayfinder:research",
@@ -104,9 +81,7 @@ def get_issue_score(item: dict) -> int:
     Rank candidates for NIM.
 
     This is NOT the final MergeMate relevance score.
-
-    It only determines which real GitHub issues deserve
-    our limited NIM evaluation budget.
+    It only determines which issues deserve NIM evaluation.
     """
 
     labels = {
@@ -114,20 +89,12 @@ def get_issue_score(item: dict) -> int:
         for label in item.get("labels", [])
     }
 
-    title = (
-        item.get("title") or ""
-    ).lower()
-
-    body = (
-        item.get("body") or ""
-    ).lower()
+    title = (item.get("title") or "").lower()
+    body = (item.get("body") or "").lower()
 
     score = 0
 
-    # ---------------------------------------------------------
     # Strong contribution signals
-    # ---------------------------------------------------------
-
     if "good first issue" in labels:
         score += 40
 
@@ -137,10 +104,7 @@ def get_issue_score(item: dict) -> int:
     if "beginner" in labels:
         score += 25
 
-    # ---------------------------------------------------------
     # Useful issue types
-    # ---------------------------------------------------------
-
     if "documentation" in labels:
         score += 15
 
@@ -153,10 +117,7 @@ def get_issue_score(item: dict) -> int:
     if "enhancement" in labels:
         score += 5
 
-    # ---------------------------------------------------------
-    # Evidence that the issue is actually actionable
-    # ---------------------------------------------------------
-
+    # Actionable issue evidence
     if body.strip():
         score += 5
 
@@ -174,13 +135,7 @@ def get_issue_score(item: dict) -> int:
         if term in body:
             score += 3
 
-    # ---------------------------------------------------------
-    # Small-scope language is useful.
-    #
-    # This is only a priority boost, NOT a final decision.
-    # NIM still determines actual scope.
-    # ---------------------------------------------------------
-
+    # Small-scope signals
     small_scope_terms = [
         "small change",
         "small fix",
@@ -205,10 +160,7 @@ def normalize_issue(item: dict) -> dict:
     Convert GitHub's response into MergeMate's internal issue format.
     """
 
-    repository_url = item.get(
-        "repository_url",
-        "",
-    )
+    repository_url = item.get("repository_url", "")
 
     repository = (
         repository_url
@@ -224,10 +176,7 @@ def normalize_issue(item: dict) -> dict:
         "url": item["html_url"],
         "labels": [
             label["name"]
-            for label in item.get(
-                "labels",
-                [],
-            )
+            for label in item.get("labels", [])
         ],
         "state": item["state"],
         "updated_at": item["updated_at"],
@@ -250,7 +199,6 @@ async def _search_github(
     }
 
     try:
-
         async with httpx.AsyncClient(
             timeout=15.0
         ) as client:
@@ -262,31 +210,32 @@ async def _search_github(
             )
 
     except httpx.RequestError as error:
-
         raise HTTPException(
             status_code=502,
             detail="Unable to connect to GitHub.",
         ) from error
 
-    if response.status_code != 200:
-
-        print(
-            "GITHUB ERROR:",
-            response.status_code,
-            response.text[:1000],
-        )
-
+    if response.status_code == 403:
         raise HTTPException(
             status_code=502,
-            detail="GitHub issue search failed.",
+            detail="GitHub API rate limit reached. Please try again shortly.",
+        )
+
+    if response.status_code == 401:
+        raise HTTPException(
+            status_code=502,
+            detail="GitHub authentication failed.",
+        )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=f"GitHub issue search failed ({response.status_code}).",
         )
 
     data = response.json()
 
-    return data.get(
-        "items",
-        [],
-    )
+    return data.get("items", [])
 
 
 async def search_github_issues(
@@ -300,7 +249,7 @@ async def search_github_issues(
     """
     Build a high-quality GitHub candidate pool.
 
-    ARCHITECTURE:
+    Architecture:
 
         GitHub
           ↓
@@ -313,8 +262,6 @@ async def search_github_issues(
         NIM
           ↓
         Personalized recommendation
-
-    IMPORTANT:
 
     known_skills are NOT inserted into the GitHub query.
 
@@ -334,10 +281,7 @@ async def search_github_issues(
     # =========================================================
 
     # MergeMate only searches publicly available GitHub issues.
-    # We intentionally do not send a personal GitHub token here.
-    # This avoids authentication failures and is sufficient for
-    # the MVP's public issue search.
-
+    # No personal GitHub token is required for this MVP.
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
@@ -345,14 +289,6 @@ async def search_github_issues(
 
     # =========================================================
     # SEARCH BASE
-    # =========================================================
-    #
-    # IMPORTANT:
-    #
-    # Search specifically in title/body.
-    #
-    # This reduces noise from issues that only mention PyTorch
-    # in environment information, metadata, etc.
     # =========================================================
 
     base_query_parts = [
@@ -366,22 +302,10 @@ async def search_github_issues(
             search_query.strip()
         )
 
-    base_query = " ".join(
-        base_query_parts
-    )
+    base_query = " ".join(base_query_parts)
 
     # =========================================================
     # SEARCH STRATEGY
-    # =========================================================
-    #
-    # We intentionally use multiple searches:
-    #
-    # 1. Good first issues
-    # 2. Help wanted
-    # 3. Documentation
-    # 4. General focus-skill issues as fallback
-    #
-    # Then we merge and deduplicate them.
     # =========================================================
 
     queries = [
@@ -395,14 +319,13 @@ async def search_github_issues(
         ),
         (
             "documentation",
-            f'{base_query} label:documentation',
+            f"{base_query} label:documentation",
         ),
     ]
 
     raw_results: dict[str, list[dict]] = {}
 
     for name, query in queries:
-
         raw_results[name] = await _search_github(
             query=query,
             headers=headers,
@@ -428,10 +351,6 @@ async def search_github_issues(
 
     # =========================================================
     # FALLBACK
-    # =========================================================
-    #
-    # We only broaden the search if the focused contribution
-    # searches don't give us enough candidates.
     # =========================================================
 
     if len(unique_issues) < NIM_CANDIDATE_LIMIT:
@@ -477,9 +396,7 @@ async def search_github_issues(
     # NIM BUDGET
     # =========================================================
 
-    candidates = candidates[
-        :NIM_CANDIDATE_LIMIT
-    ]
+    candidates = candidates[:NIM_CANDIDATE_LIMIT]
 
     # =========================================================
     # NORMALIZE
@@ -491,68 +408,10 @@ async def search_github_issues(
     ]
 
     # =========================================================
-    # DEBUG
-    # =========================================================
-
-    print(
-        "\n========== GITHUB CANDIDATE PIPELINE =========="
-    )
-
-    print(
-        "Focus skill:",
-        focus_skill,
-    )
-
-    for name, results in raw_results.items():
-
-        print(
-            f"{name}:",
-            len(results),
-        )
-
-    print(
-        "Unique raw candidates:",
-        len(unique_issues),
-    )
-
-    print(
-        "After deterministic filtering:",
-        len(
-            [
-                item
-                for item in unique_issues.values()
-                if not is_low_value_issue(item)
-            ]
-        ),
-    )
-
-    print(
-        "Sent to NIM:",
-        len(issues),
-    )
-
-    for index, issue in enumerate(
-        issues,
-        start=1,
-    ):
-
-        print(
-            f"{index}. "
-            f"{issue['repository']} — "
-            f"{issue['title']} | "
-            f"labels={issue['labels']}"
-        )
-
-    print(
-        "================================================\n"
-    )
-
-    # =========================================================
     # NO CANDIDATES
     # =========================================================
 
     if not issues:
-
         return {
             "focus_skill": focus_skill,
             "total_candidates": 0,
@@ -615,9 +474,7 @@ async def search_github_issues(
         )
 
         if issue:
-            recommended_issues.append(
-                issue
-            )
+            recommended_issues.append(issue)
 
     # =========================================================
     # SORT BY NIM SCORE
@@ -631,32 +488,17 @@ async def search_github_issues(
         reverse=True,
     )
 
-    # =========================================================
-    # FINAL DEBUG
-    # =========================================================
-
-    print(
-        "\n========== NIM RECOMMENDATIONS =========="
-    )
-
-    for match in recommended_matches:
-
-        print(
-            match["issue_id"],
-            "| score:",
-            match["relevance_score"],
-            "| difficulty:",
-            match["difficulty_fit"],
-            "| stack:",
-            match["stack_fit"],
-            "| beginner:",
-            match["beginner_suitable"],
-            "| scope:",
-            match["scope"],
-        )
-
-    print(
-        "==========================================\n"
+    # Keep issues in the same order as matches.
+    recommended_issues.sort(
+        key=lambda issue: next(
+            (
+                match.get("relevance_score", 0)
+                for match in recommended_matches
+                if match.get("issue_id") == issue["id"]
+            ),
+            0,
+        ),
+        reverse=True,
     )
 
     # =========================================================
