@@ -854,20 +854,6 @@ async def evaluate_issues(
     # DEBUG RAW RESPONSE
     # --------------------------------------------------------
 
-    print(
-        "\n========== RAW NIM RESPONSE =========="
-    )
-
-    print(
-        json.dumps(
-            parsed,
-            indent=2,
-        )
-    )
-
-    print(
-        "======================================\n"
-    )
 
     matches = parsed.get(
         "matches",
@@ -886,14 +872,7 @@ async def evaluate_issues(
         for issue in issues
     }
 
-    print(
-        "\n========== MATCH DEBUG =========="
-    )
-
-    print(
-        "VALID ISSUE IDS:",
-        valid_ids,
-    )
+   
 
     for match in matches:
 
@@ -901,23 +880,7 @@ async def evaluate_issues(
             "issue_id"
         )
 
-        print(
-            "NIM ISSUE:",
-            issue_id,
-            "TYPE:",
-            type(issue_id),
-            "IN VALID IDS:",
-            issue_id in valid_ids,
-        )
-
-    print(
-        "EXPERIENCE:",
-        repr(experience),
-    )
-
-    print(
-        "================================\n"
-    )
+   
 
     # --------------------------------------------------------
     # CLEAN MATCHES
@@ -1123,22 +1086,6 @@ async def evaluate_issues(
         # DEBUG
         # ----------------------------------------------------
 
-        print(
-            "\nPASSING GATE:",
-            issue_id,
-            "| score:",
-            relevance_score,
-            "| difficulty:",
-            difficulty_fit,
-            "| stack:",
-            stack_fit,
-            "| beginner:",
-            beginner_suitable,
-            "| scope:",
-            scope,
-            "| recommended:",
-            recommended,
-        )
 
         # ----------------------------------------------------
         # STORE
@@ -1185,19 +1132,6 @@ async def evaluate_issues(
         if item["recommended"]
     ]
 
-    print(
-        "\n========== NIM RECOMMENDATIONS =========="
-    )
 
-    print(
-        json.dumps(
-            recommendations,
-            indent=2,
-        )
-    )
-
-    print(
-        "==========================================\n"
-    )
 
     return cleaned_matches
