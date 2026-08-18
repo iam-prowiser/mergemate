@@ -330,14 +330,16 @@ async def search_github_issues(
     known_skills = known_skills or []
 
     # =========================================================
-    # GITHUB AUTH
+    # GITHUB API
     # =========================================================
+
+    # MergeMate only searches publicly available GitHub issues.
+    # We intentionally do not send a personal GitHub token here.
+    # This avoids authentication failures and is sufficient for
+    # the MVP's public issue search.
 
     headers = {
         "Accept": "application/vnd.github+json",
-        "Authorization": (
-            f"Bearer {settings.github_token}"
-        ),
         "X-GitHub-Api-Version": "2022-11-28",
     }
 
