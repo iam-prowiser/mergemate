@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+firebase-admin
+httpx
+openai
+python-multipart
+markitdown[pdf]
