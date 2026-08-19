@@ -11,6 +11,9 @@ const Questionnaire = lazy(() => import("./pages/Questionnaire"));
 const Explore = lazy(() => import("./pages/Explore"));
 const Matches = lazy(() => import("./pages/Matches"));
 const IssueDetails = lazy(() => import("./pages/IssueDetails"));
+const NoResumeQuestionnaire = lazy(
+  () => import("./pages/NoResumeQuestionnaire"),
+);
 
 function PageLoader() {
   return (
@@ -43,6 +46,7 @@ export default function App() {
           {/* App */}
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/questionnaire" element={<Questionnaire />} />
+          <Route path="/no-resume-questionnaire" element={<NoResumeQuestionnaire />}/>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/opportunities" element={<Explore />} />
           <Route path="/issue/:id" element={<IssueDetails />} />

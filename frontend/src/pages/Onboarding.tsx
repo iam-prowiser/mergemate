@@ -35,7 +35,7 @@ export default function Onboarding() {
 
     // User chose to skip the resume
     if (!resume) {
-      navigate("/questionnaire");
+      navigate("/no-resume-questionnaire");
       return;
     }
 
@@ -152,7 +152,7 @@ export default function Onboarding() {
 
           <button
             type="button"
-            onClick={() => navigate("/questionnaire")}
+            onClick={() => navigate("/no-resume-questionnaire")}
             className="mt-5 w-full text-center text-sm font-medium text-blue-600 hover:underline"
           >
             I don't have a resume

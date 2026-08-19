@@ -41,11 +41,6 @@ export default function Questionnaire() {
         contributions,
       };
 
-      console.log("Sending skill-gap request:", {
-        payload,
-        hasToken: Boolean(idToken),
-        user: user.email,
-      });
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/ai/skill-gap`,
@@ -67,9 +62,9 @@ export default function Questionnaire() {
         data = null;
       }
 
-      console.log("Skill-gap response status:", response.status);
+    
 
-      console.log("Skill-gap response:", data);
+
 
       if (!response.ok) {
         throw new Error(
@@ -84,7 +79,7 @@ export default function Questionnaire() {
        */
       sessionStorage.setItem("skillGapResult", JSON.stringify(data));
 
-      console.log("Skill-gap analysis completed successfully.");
+
 
       /*
        * Only navigate after the AI response has
