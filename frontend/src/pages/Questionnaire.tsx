@@ -114,53 +114,56 @@ export default function Questionnaire() {
    */
   if (isSubmitting) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#f6f8fa] px-6">
-        <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white px-8 py-10 text-center shadow-sm">
-          {/* Spinner */}
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50">
-            <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-blue-100 border-t-blue-600" />
+      <>
+        <Navbar />
+        <main className="flex min-h-screen items-center justify-center bg-[#f6f8fa] px-6">
+          <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white px-8 py-10 text-center shadow-sm">
+            {/* Spinner */}
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50">
+              <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-blue-100 border-t-blue-600" />
+            </div>
+
+            <h1 className="mt-6 text-2xl font-bold tracking-tight">
+              Analyzing your profile
+            </h1>
+
+            <p className="mt-3 text-sm leading-6 text-neutral-500">
+              MergeMate is comparing your current skills with the requirements
+              for your target role.
+            </p>
+
+            <div className="mt-6 space-y-2 text-left">
+              <div className="flex items-center gap-3 rounded-lg bg-neutral-50 px-4 py-3">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-blue-600" />
+
+                <span className="text-sm text-neutral-600">
+                  Analyzing your experience
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 rounded-lg bg-neutral-50 px-4 py-3">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-blue-600" />
+
+                <span className="text-sm text-neutral-600">
+                  Identifying skill gaps
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 rounded-lg bg-neutral-50 px-4 py-3">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-blue-600" />
+
+                <span className="text-sm text-neutral-600">
+                  Building your career path
+                </span>
+              </div>
+            </div>
+
+            <p className="mt-6 text-xs text-neutral-400">
+              This may take a few seconds.
+            </p>
           </div>
-
-          <h1 className="mt-6 text-2xl font-bold tracking-tight">
-            Analyzing your profile
-          </h1>
-
-          <p className="mt-3 text-sm leading-6 text-neutral-500">
-            MergeMate is comparing your current skills with the requirements for
-            your target role.
-          </p>
-
-          <div className="mt-6 space-y-2 text-left">
-            <div className="flex items-center gap-3 rounded-lg bg-neutral-50 px-4 py-3">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-blue-600" />
-
-              <span className="text-sm text-neutral-600">
-                Analyzing your experience
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 rounded-lg bg-neutral-50 px-4 py-3">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-blue-600" />
-
-              <span className="text-sm text-neutral-600">
-                Identifying skill gaps
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 rounded-lg bg-neutral-50 px-4 py-3">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-blue-600" />
-
-              <span className="text-sm text-neutral-600">
-                Building your career path
-              </span>
-            </div>
-          </div>
-
-          <p className="mt-6 text-xs text-neutral-400">
-            This may take a few seconds.
-          </p>
-        </div>
-      </main>
+        </main>
+      </>
     );
   }
 

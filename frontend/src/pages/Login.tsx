@@ -55,7 +55,7 @@ export default function Login() {
   return (
     <>
       <Navbar />
-      <main className="flex min-h-screen flex-col bg-[#fafafa]">
+      <main className="flex min-h-screen flex-col bg-[#fafafa] mt-12">
         {/* Card */}
 
         <div className="flex flex-1 items-center justify-center px-6 py-10">

@@ -118,8 +118,8 @@ export default function Signup() {
   return (
     <>
       <Navbar />
-      
-      <main className="flex min-h-screen flex-col bg-[#f6f8fa]">
+
+      <main className="mt-12 flex min-h-screen flex-col bg-[#f6f8fa]">
         <div className="flex flex-1 items-center justify-center px-6 py-10">
           <Card>
             <div className="mb-8 flex flex-col items-center">

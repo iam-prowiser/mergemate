@@ -7,9 +7,11 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link
           to="/"
-          className="flex items-center gap-2 text-lg font-semibold text-gray-900"
+          className="flex items-center gap-2 text-sm font-semibold text-gray-900"
         >
-          <GitBranch size={24} strokeWidth={1.8} />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2f6feb] text-white">
+              <GitBranch size={17} />
+            </div>
           <span>MergeMate</span>
         </Link>
 
