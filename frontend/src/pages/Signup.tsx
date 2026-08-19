@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { FormEvent } from "react";
 
-import {
-  GitBranch,
-  User,
-  Mail,
-  Lock,
-  GitMergeConflict,
-} from "lucide-react";
+import { GitBranch, User, Mail, Lock, GitMergeConflict } from "lucide-react";
 
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
@@ -17,6 +11,7 @@ import Input from "../components/ui/Input";
 import PasswordInput from "../components/ui/PasswordInput";
 
 import { register, githubLogin } from "../firebase/authService";
+import Navbar from "../components/layout/Navbar";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -84,14 +79,12 @@ export default function Signup() {
           break;
 
         case "auth/operation-not-allowed":
-          setError(
-            "Email/password authentication is not enabled in Firebase."
-          );
+          setError("Email/password authentication is not enabled in Firebase.");
           break;
 
         case "auth/invalid-api-key":
           setError(
-            "Firebase is not configured correctly. Please try again later."
+            "Firebase is not configured correctly. Please try again later.",
           );
           break;
 
@@ -115,7 +108,7 @@ export default function Signup() {
       console.error("GitHub authentication failed:", error);
 
       setError(
-        "GitHub sign-up failed. Please make sure GitHub authentication is configured."
+        "GitHub sign-up failed. Please make sure GitHub authentication is configured.",
       );
     } finally {
       setLoading(false);
@@ -123,104 +116,102 @@ export default function Signup() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-[#f6f8fa]">
-      <div className="flex flex-1 items-center justify-center px-6 py-10">
-        <Card>
-          <div className="mb-8 flex flex-col items-center">
-            <GitBranch
-              size={52}
-              strokeWidth={1.8}
-              className="mb-6"
-            />
+    <>
+      <Navbar />
+      
+      <main className="flex min-h-screen flex-col bg-[#f6f8fa]">
+        <div className="flex flex-1 items-center justify-center px-6 py-10">
+          <Card>
+            <div className="mb-8 flex flex-col items-center">
+              <GitBranch size={52} strokeWidth={1.8} className="mb-6" />
 
-            <h1 className="text-4xl font-bold tracking-tight">
-              Create your account
-            </h1>
+              <h1 className="text-4xl font-bold tracking-tight">
+                Create your account
+              </h1>
 
-            <p className="mt-2 text-gray-500">
-              Join and get started today
-            </p>
-          </div>
+              <p className="mt-2 text-gray-500">Join and get started today</p>
+            </div>
 
-          <form onSubmit={handleSubmit}>
-            <Input
-              label="Full name"
-              placeholder="Your full name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              icon={<User size={18} />}
-            />
+            <form onSubmit={handleSubmit}>
+              <Input
+                label="Full name"
+                placeholder="Your full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                icon={<User size={18} />}
+              />
 
-            <Input
-              label="Email address"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={<Mail size={18} />}
-            />
+              <Input
+                label="Email address"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                icon={<Mail size={18} />}
+              />
 
-            <PasswordInput
-              label="Password"
-              placeholder="Create a password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={<Lock size={18} />}
-            />
+              <PasswordInput
+                label="Password"
+                placeholder="Create a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={<Lock size={18} />}
+              />
 
-            <p className="mb-5 -mt-3 text-xs text-gray-500">
-              Use at least 8 characters with a mix of letters, numbers &amp;
-              symbols.
-            </p>
+              <p className="mb-5 -mt-3 text-xs text-gray-500">
+                Use at least 8 characters with a mix of letters, numbers &amp;
+                symbols.
+              </p>
 
-            <PasswordInput
-              label="Confirm password"
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              icon={<Lock size={18} />}
-            />
+              <PasswordInput
+                label="Confirm password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                icon={<Lock size={18} />}
+              />
 
-            {error && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                {error}
-              </div>
-            )}
+              {error && (
+                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                  {error}
+                </div>
+              )}
 
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating account..." : "Sign up"}
-            </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Creating account..." : "Sign up"}
+              </Button>
 
-            <Divider />
+              <Divider />
 
-            <button
-              type="button"
-              disabled={loading}
-              onClick={handleGithubSignup}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-3 font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <GitMergeConflict size={20} />
-              Sign up with GitHub
-            </button>
-
-            <p className="mt-8 text-center text-gray-500">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="font-medium text-blue-600 hover:underline"
+              <button
+                type="button"
+                disabled={loading}
+                onClick={handleGithubSignup}
+                className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-3 font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Sign in
-              </Link>
-            </p>
-          </form>
-        </Card>
-      </div>
+                <GitMergeConflict size={20} />
+                Sign up with GitHub
+              </button>
 
-      <footer className="border-t bg-white">
-        <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-8 px-6 py-6 text-sm text-gray-500">
-          <span>© 2026 MergeMate</span>
+              <p className="mt-8 text-center text-gray-500">
+                Already have an account?{" "}
+                <Link
+                  to="/login"
+                  className="font-medium text-blue-600 hover:underline"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </form>
+          </Card>
         </div>
-      </footer>
-    </main>
+
+        <footer className="border-t bg-white">
+          <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-8 px-6 py-6 text-sm text-gray-500">
+            <span>© 2026 MergeMate</span>
+          </div>
+        </footer>
+      </main>
+    </>
   );
 }
