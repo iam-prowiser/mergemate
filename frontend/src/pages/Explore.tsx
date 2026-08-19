@@ -112,10 +112,7 @@ export default function Explore() {
       const parsed =
         JSON.parse(stored) as SkillGapResult;
 
-      console.log(
-        "Loaded skill-gap result for Explore:",
-        parsed
-      );
+      
 
       setSkillGapResult(parsed);
 
@@ -142,10 +139,7 @@ export default function Explore() {
         setSearchMode("developing");
       }
     } catch (error) {
-      console.error(
-        "Failed to load skill-gap result:",
-        error
-      );
+      
     } finally {
       setLoadingProfile(false);
     }
@@ -235,10 +229,7 @@ export default function Explore() {
         replace: true,
       });
     } catch (error) {
-      console.error(
-        "Logout failed:",
-        error
-      );
+      
     }
   }
 
@@ -355,50 +346,6 @@ export default function Explore() {
         target_role: targetRole,
       };
 
-      console.log(
-        "========== MERGEMATE SEARCH =========="
-      );
-
-      console.log(
-        "Search mode:",
-        searchMode
-      );
-
-      console.log(
-        "Focus skill:",
-        focusSkill
-      );
-
-      console.log(
-        "Known skills:",
-        knownSkills
-      );
-
-      console.log(
-        "Experience:",
-        experience
-      );
-
-      console.log(
-        "Contributions:",
-        contributions
-      );
-
-      console.log(
-        "Target role:",
-        targetRole
-      );
-
-      console.log(
-        "======================================"
-      );
-
-      /*
-       * ======================================================
-       * CALL FASTAPI
-       * ======================================================
-       */
-
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/github/search`,
         {
@@ -421,15 +368,6 @@ export default function Explore() {
         data = null;
       }
 
-      console.log(
-        "GitHub search status:",
-        response.status
-      );
-
-      console.log(
-        "GitHub search response:",
-        data
-      );
 
       /*
        * ======================================================
@@ -467,9 +405,6 @@ export default function Explore() {
         JSON.stringify(payload)
       );
 
-      console.log(
-        "MergeMate search completed successfully."
-      );
 
       /*
        * ======================================================
@@ -479,10 +414,7 @@ export default function Explore() {
 
       navigate("/matches");
     } catch (error) {
-      console.error(
-        "MergeMate search failed:",
-        error
-      );
+   
 
       setError(
         error instanceof Error

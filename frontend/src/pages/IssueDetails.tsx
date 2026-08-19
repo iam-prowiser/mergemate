@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Clock3,
-  Tag,
   ArrowLeft,
   CircleAlert,
   BookOpen,
@@ -1197,31 +1196,3 @@ function CheckRow({
 /* ============================================================
    GUIDE ITEM
 ============================================================ */
-
-function GuideItem({
-  number,
-  title,
-  text,
-}: {
-  number: string;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-
-      <span className="text-xs font-bold text-blue-600">
-        {number}
-      </span>
-
-      <h3 className="mt-2 text-sm font-bold">
-        {title}
-      </h3>
-
-      <p className="mt-1 text-xs leading-5 text-neutral-500">
-        {text}
-      </p>
-
-    </div>
-  );
-}

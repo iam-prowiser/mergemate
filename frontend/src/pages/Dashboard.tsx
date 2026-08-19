@@ -239,11 +239,11 @@ export default function SkillGapDashboard() {
     try {
       const parsed = JSON.parse(stored);
 
-      console.log("Dashboard AI result:", parsed);
+  
 
       setResult(parsed);
     } catch (error) {
-      console.error("Failed to parse skillGapResult:", error);
+     
     }
   }, []);
 
@@ -259,7 +259,7 @@ export default function SkillGapDashboard() {
 
     navigate("/login", { replace: true });
   } catch (error) {
-    console.error("Logout failed:", error);
+   
   }
 }
 

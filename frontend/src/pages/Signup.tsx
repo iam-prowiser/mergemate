@@ -17,11 +17,11 @@ import Divider from "../components/ui/Divider";
 import Input from "../components/ui/Input";
 import PasswordInput from "../components/ui/PasswordInput";
 
-import {
-  register,
-  githubLogin,
-} from "../firebase/authService";
-import Onboarding from "./Onboarding";
+// import {
+//   register,
+//   githubLogin,
+// } from "../firebase/authService";
+
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -73,12 +73,7 @@ export default function Signup() {
       setLoading(true);
 
 
-      const result = await register(
-        fullName.trim(),
-        email.trim(),
-        password
-      );
-
+      
       
 
       navigate("/Onboarding");
@@ -100,7 +95,7 @@ export default function Signup() {
 
     
 
-      const result = await githubLogin();
+      // const result = await githubLogin();
 
       navigate("/dashboard");
     } catch (error) {
