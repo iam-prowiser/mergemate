@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { FormEvent } from "react";
 
-
 import {
   GitBranch,
   User,
@@ -17,11 +16,7 @@ import Divider from "../components/ui/Divider";
 import Input from "../components/ui/Input";
 import PasswordInput from "../components/ui/PasswordInput";
 
-// import {
-//   register,
-//   githubLogin,
-// } from "../firebase/authService";
-
+import { register, githubLogin } from "../firebase/authService";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -29,15 +24,12 @@ export default function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(
-    e: FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setError("");
@@ -58,9 +50,7 @@ export default function Signup() {
     }
 
     if (password.length < 8) {
-      setError(
-        "Password must be at least 8 characters."
-      );
+      setError("Password must be at least 8 characters.");
       return;
     }
 
@@ -72,17 +62,42 @@ export default function Signup() {
     try {
       setLoading(true);
 
+      // REAL FIREBASE REGISTRATION
+      await register(fullName.trim(), email.trim(), password);
 
-      
-      
+      // Only navigate after Firebase successfully creates the account
+      navigate("/onboarding");
+    } catch (error: any) {
+      console.error("Signup error:", error);
 
-      navigate("/Onboarding");
-    } catch (error) {
-      
+      switch (error?.code) {
+        case "auth/email-already-in-use":
+          setError("An account with this email already exists.");
+          break;
 
-      setError(
-        "Something went wrong. Please try again."
-      );
+        case "auth/invalid-email":
+          setError("Please enter a valid email address.");
+          break;
+
+        case "auth/weak-password":
+          setError("Your password is too weak.");
+          break;
+
+        case "auth/operation-not-allowed":
+          setError(
+            "Email/password authentication is not enabled in Firebase."
+          );
+          break;
+
+        case "auth/invalid-api-key":
+          setError(
+            "Firebase is not configured correctly. Please try again later."
+          );
+          break;
+
+        default:
+          setError("Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -93,19 +108,14 @@ export default function Signup() {
       setError("");
       setLoading(true);
 
-    
-
-      // const result = await githubLogin();
+      await githubLogin();
 
       navigate("/dashboard");
-    } catch (error) {
-      console.error(
-        "❌ GitHub authentication failed:",
-        error
-      );
+    } catch (error: any) {
+      console.error("GitHub authentication failed:", error);
 
       setError(
-        "GitHub sign-up failed. Please try again."
+        "GitHub sign-up failed. Please make sure GitHub authentication is configured."
       );
     } finally {
       setLoading(false);
@@ -120,7 +130,7 @@ export default function Signup() {
             <GitBranch
               size={52}
               strokeWidth={1.8}
-              className="mb-6rounded"
+              className="mb-6"
             />
 
             <h1 className="text-4xl font-bold tracking-tight">
@@ -137,9 +147,7 @@ export default function Signup() {
               label="Full name"
               placeholder="Your full name"
               value={fullName}
-              onChange={(e) =>
-                setFullName(e.target.value)
-              }
+              onChange={(e) => setFullName(e.target.value)}
               icon={<User size={18} />}
             />
 
@@ -148,9 +156,7 @@ export default function Signup() {
               type="email"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
+              onChange={(e) => setEmail(e.target.value)}
               icon={<Mail size={18} />}
             />
 
@@ -158,24 +164,20 @@ export default function Signup() {
               label="Password"
               placeholder="Create a password"
               value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
+              onChange={(e) => setPassword(e.target.value)}
               icon={<Lock size={18} />}
             />
 
             <p className="mb-5 -mt-3 text-xs text-gray-500">
-              Use at least 8 characters with a mix of
-              letters, numbers &amp; symbols.
+              Use at least 8 characters with a mix of letters, numbers &amp;
+              symbols.
             </p>
 
             <PasswordInput
               label="Confirm password"
               placeholder="Confirm your password"
               value={confirmPassword}
-              onChange={(e) =>
-                setConfirmPassword(e.target.value)
-              }
+              onChange={(e) => setConfirmPassword(e.target.value)}
               icon={<Lock size={18} />}
             />
 
@@ -185,13 +187,8 @@ export default function Signup() {
               </div>
             )}
 
-            <Button
-              type="submit"
-              disabled={loading}
-            >
-              {loading
-                ? "Creating account..."
-                : "Sign up"}
+            <Button type="submit" disabled={loading}>
+              {loading ? "Creating account..." : "Sign up"}
             </Button>
 
             <Divider />
@@ -203,14 +200,13 @@ export default function Signup() {
               className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-3 font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <GitMergeConflict size={20} />
-
               Sign up with GitHub
             </button>
 
             <p className="mt-8 text-center text-gray-500">
               Already have an account?{" "}
               <Link
-                to="/"
+                to="/login"
                 className="font-medium text-blue-600 hover:underline"
               >
                 Sign in

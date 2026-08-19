@@ -1,36 +1,54 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import Onboarding from "./pages/Onboarding";
-import Questionnaire from "./pages/Questionnaire";
-import Explore from "./pages/Explore";
-import Matches from "./pages/Matches";
-import IssueDetails from "./pages/IssueDetails";
+
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Questionnaire = lazy(() => import("./pages/Questionnaire"));
+const Explore = lazy(() => import("./pages/Explore"));
+const Matches = lazy(() => import("./pages/Matches"));
+const IssueDetails = lazy(() => import("./pages/IssueDetails"));
+
+function PageLoader() {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#ffffff",
+      }}
+    >
+      Loading...
+    </div>
+  );
+}
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public landing page */}
-        <Route path="/" element={<Landing />} />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Public landing page */}
+          <Route path="/" element={<Landing />} />
 
-        {/* Authentication */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+          {/* Auth */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        {/* Onboarding */}
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/questionnaire" element={<Questionnaire />} />
-
-        {/* Application */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/opportunities" element={<Explore />} />
-        <Route path="/matches" element={<Matches />} />
-        <Route path="/issue/:id" element={<IssueDetails />} />
-      </Routes>
+          {/* App */}
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/questionnaire" element={<Questionnaire />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/opportunities" element={<Explore />} />
+          <Route path="/issue/:id" element={<IssueDetails />} />
+          <Route path="/matches" element={<Matches />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }
