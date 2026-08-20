@@ -6,6 +6,9 @@ from app.core.config import settings
 
 if not firebase_admin._apps:
     credential = credentials.Certificate(
+
+
+        
         {
             "type": "service_account",
             "project_id": settings.firebase_project_id,
